@@ -41,15 +41,15 @@
 	AS SELECT * FROM infectious_cases;
 
 	ALTER TABLE infectious
-	DROP COLUMN entity,
 	ADD COLUMN id INT PRIMARY KEY AUTO_INCREMENT FIRST,
 	ADD country_id INT AFTER id,
 	ADD FOREIGN KEY(country_id) REFERENCES countries(id);
 
 	UPDATE infectious i, countries c
-	SET i.country_id = c.id WHERE c.code = i.code;
+	SET i.country_id = c.id WHERE c.code = i.code AND c.country=i.entity;
 
 	ALTER TABLE infectious
+	DROP COLUMN entity,
 	DROP COLUMN code;
 
 	SELECT *
@@ -110,7 +110,7 @@
 	READS SQL DATA
 	BEGIN
 		DECLARE result INT;
-    		SET result = YEAR(NOW()) - beginning_date;
+    		SET result = TIMESTAMPDIFF(YEAR, MAKEDATE(beginning_date, 1), CURDATE());
     		RETURN result;
 	END //
 	DELIMITER ;
